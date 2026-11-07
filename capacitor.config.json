@@ -1,0 +1,6 @@
+{
+  "appId": "com.rerb.lumieres",
+  "appName": "RER B Lumières",
+  "webDir": "www",
+  "android": { "allowMixedContent": false }
+}

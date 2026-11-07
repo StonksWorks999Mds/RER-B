@@ -1,0 +1,1105 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>RER B Lumières</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Barlow+Semi+Condensed:wght@500;600&display=swap">
+<style>
+  /* Layout : carte horizontale sur écran large, carte verticale en portrait mobile (une seule colonne de lecture), liste de boutons synchronisée dessous. */
+  :root {
+    --bg: #eef2f7;
+    --surface: #ffffff;
+    --fg: #14213a;
+    --muted: #5b6b86;
+    --line: #4f8fd3;
+    --dot-fill: #ffffff;
+    --dot-stroke: #14213a;
+    --orange: #ff8a1c;
+    --orange-text: #b84f00;
+    --grey: #8f99ab;
+    --grey-text: #566074;
+    --glow: var(--orange);
+    --glow-text: var(--orange-text);
+    --on-glow: #1f0e00;
+    --border: #d3dbe8;
+    --chip: #f6f8fb;
+    --board-bg: #0b1220;
+    --board-fg: #ffb347;
+    --display: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif;
+    --body: 'Barlow Semi Condensed', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b1322;
+      --surface: #111c31;
+      --fg: #e8eefb;
+      --muted: #93a3c0;
+      --line: #3f78b8;
+      --dot-fill: #eef3fc;
+      --dot-stroke: #050a14;
+      --orange: #ff9a2e;
+      --orange-text: #ffab4d;
+      --grey: #b7c0cf;
+      --grey-text: #c3cbd8;
+      --border: #223250;
+      --chip: #16233b;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b1322;
+    --surface: #111c31;
+    --fg: #e8eefb;
+    --muted: #93a3c0;
+    --line: #3f78b8;
+    --dot-fill: #eef3fc;
+    --dot-stroke: #050a14;
+    --orange: #ff9a2e;
+    --orange-text: #ffab4d;
+    --grey: #b7c0cf;
+    --grey-text: #c3cbd8;
+    --border: #223250;
+    --chip: #16233b;
+    color-scheme: dark;
+  }
+  :root[data-glow="grey"] {
+    --glow: var(--grey);
+    --glow-text: var(--grey-text);
+    --on-glow: #0f1623;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.45;
+    padding-block: 24px 40px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    -webkit-tap-highlight-color: transparent;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+
+  .head { display: flex; align-items: center; gap: 14px; }
+  .badge {
+    flex: none; width: 46px; height: 46px; border-radius: 50%;
+    background: var(--line); color: #fff;
+    display: grid; place-items: center;
+    font-family: var(--display); font-weight: 700; font-size: 28px; line-height: 1;
+  }
+  h1 {
+    margin: 0; font-family: var(--display); font-weight: 700;
+    font-size: clamp(28px, 6vw, 40px); line-height: 1.05; letter-spacing: 0.01em;
+    text-wrap: balance;
+  }
+  .head p { margin: 2px 0 0; color: var(--muted); }
+
+  .bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+  .count { display: flex; align-items: center; gap: 10px; font-weight: 600; font-variant-numeric: tabular-nums; min-width: 0; }
+  .bulb {
+    flex: none; width: 14px; height: 14px; border-radius: 50%;
+    background: var(--border); transition: background .2s, box-shadow .2s;
+  }
+  .bulb.on { background: var(--glow); box-shadow: 0 0 10px 3px var(--glow); }
+  .btns { display: flex; flex-wrap: wrap; gap: 8px; }
+  .btn {
+    min-height: 44px; padding: 8px 16px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface); color: var(--fg);
+    font: inherit; font-weight: 600; cursor: pointer;
+    touch-action: manipulation;
+  }
+  .btn.primary { background: var(--glow); border-color: var(--glow); color: var(--on-glow); }
+  .btn:disabled { opacity: .45; cursor: default; }
+  .btn:focus-visible, .chip:focus-visible { outline: 3px solid var(--fg); outline-offset: 2px; }
+
+  .opts { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; }
+  .opt { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .opt > span { color: var(--muted); font-size: 14px; font-weight: 600; }
+  .seg {
+    display: inline-flex; gap: 3px; padding: 3px;
+    border: 1px solid var(--border); border-radius: 10px; background: var(--surface);
+  }
+  .seg button {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-width: 44px; min-height: 40px; padding: 0 12px;
+    border: 0; border-radius: 7px; background: transparent; color: var(--muted);
+    font: inherit; font-weight: 600; cursor: pointer; touch-action: manipulation;
+  }
+  .seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+  .seg button:focus-visible { outline: 3px solid var(--fg); outline-offset: 2px; }
+  .ico { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .sw { flex: none; width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--border); }
+  .sw-orange { background: var(--orange); }
+  .sw-grey { background: var(--grey); }
+
+  .map {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .map svg { display: block; width: 100%; height: auto; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+  .map svg.map-h { min-width: 760px; }
+  .map svg.map-v { display: none; max-width: 460px; margin: 0 auto; }
+  @media (max-width: 720px) {
+    .map svg.map-h { display: none; }
+    .map svg.map-v { display: block; }
+  }
+  .track { fill: none; stroke: var(--line); stroke-width: 16; stroke-linecap: round; stroke-linejoin: round; }
+
+  .stop { cursor: pointer; outline: none; }
+  .hit { stroke: none; }
+  .stop:focus-visible .hit { stroke: var(--fg); stroke-width: 2; stroke-dasharray: 3 3; }
+  .dot { fill: var(--dot-fill); stroke: var(--dot-stroke); stroke-width: 2.2; transition: fill .2s; }
+  .stop.orange .dot { fill: var(--orange); }
+  .stop.grey .dot { fill: var(--grey); }
+  .halo { opacity: 0; pointer-events: none; transition: opacity .25s; }
+  .halo.on { opacity: 1; }
+  .lbl { font-family: var(--body); font-size: 15.5px; font-weight: 600; fill: var(--fg); transition: fill .2s; }
+  .stop.orange .lbl { fill: var(--orange-text); }
+  .stop.grey .lbl { fill: var(--grey-text); }
+
+  [hidden] { display: none !important; }
+  .btn.with-ico { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+
+  .ann { display: flex; flex-direction: column; gap: 14px; }
+  .ann-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; }
+  .ann h2.ann-title {
+    margin: 0; font-family: var(--display); font-size: 28px; font-weight: 700;
+    letter-spacing: 0.01em; text-transform: none; color: var(--fg);
+  }
+  .ann-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .phrase {
+    display: flex; flex-direction: column; gap: 12px; min-width: 0;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+  }
+  .phrase-title { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .sentence { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; font-size: 17px; font-weight: 500; }
+  .sentence select {
+    flex: 1 1 220px; min-width: 0; max-width: 100%; min-height: 44px; padding: 6px 10px;
+    border: 1px solid var(--border); border-radius: 8px; background: var(--chip); color: var(--fg);
+    font: inherit; font-size: 16px;
+  }
+  .sentence select:focus-visible, .tag:focus-visible { outline: 3px solid var(--fg); outline-offset: 2px; }
+  .board {
+    background: var(--board-bg); color: var(--board-fg); border-radius: 8px;
+    padding: 14px 16px; min-height: 4.2em;
+    font-size: 19px; font-weight: 600; line-height: 1.4; text-wrap: pretty;
+  }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tags:empty::before { content: 'Aucune gare ajoutée pour le moment.'; color: var(--muted); font-size: 14px; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 12px;
+    border-radius: 999px; border: 1px solid var(--border); background: var(--chip); color: var(--fg);
+    font: inherit; font-weight: 500; cursor: pointer; touch-action: manipulation;
+  }
+  .note { margin: 0; color: var(--muted); font-size: 14px; }
+  .sel {
+    min-width: 0; max-width: 100%; min-height: 44px; padding: 6px 10px;
+    border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--fg);
+    font: inherit; font-size: 15px;
+  }
+  .opt .sel { max-width: 250px; }
+  .sel:focus-visible { outline: 3px solid var(--fg); outline-offset: 2px; }
+
+  .lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; }
+  .lists section { min-width: 0; }
+  h2 {
+    margin: 0 0 10px; font-size: 13px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    min-height: 40px; padding: 6px 12px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--chip); color: var(--fg);
+    font: inherit; font-weight: 500; cursor: pointer; text-align: left;
+    touch-action: manipulation;
+  }
+  .pip { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--dot-fill); border: 2px solid var(--dot-stroke); transition: background .2s, box-shadow .2s; }
+  .chip[data-c="orange"] { border-color: var(--orange); }
+  .chip[data-c="orange"] .pip { background: var(--orange); box-shadow: 0 0 8px 2px var(--orange); }
+  .chip[data-c="grey"] { border-color: var(--grey); }
+  .chip[data-c="grey"] .pip { background: var(--grey); box-shadow: 0 0 8px 2px var(--grey); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dot, .halo, .lbl, .bulb, .pip { transition: none; }
+  }
+</style>
+
+<svg width="0" height="0" style="position: absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <radialGradient id="halo-orange">
+      <stop offset="0" style="stop-color: var(--orange); stop-opacity: .9"></stop>
+      <stop offset=".55" style="stop-color: var(--orange); stop-opacity: .35"></stop>
+      <stop offset="1" style="stop-color: var(--orange); stop-opacity: 0"></stop>
+    </radialGradient>
+    <radialGradient id="halo-grey">
+      <stop offset="0" style="stop-color: var(--grey); stop-opacity: .9"></stop>
+      <stop offset=".55" style="stop-color: var(--grey); stop-opacity: .4"></stop>
+      <stop offset="1" style="stop-color: var(--grey); stop-opacity: 0"></stop>
+    </radialGradient>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header class="head">
+    <div class="badge" aria-hidden="true">B</div>
+    <div>
+      <h1>Allume tes gares</h1>
+      <p>Choisis une couleur, puis touche une gare ou un point blanc pour l’allumer. Touche-la avec l’autre couleur pour la changer.</p>
+    </div>
+  </header>
+
+  <div class="bar">
+    <div class="count" aria-live="polite"><span class="bulb" id="bulb"></span><span id="count"></span></div>
+    <div class="btns">
+      <button type="button" class="btn primary" id="all">Tout allumer</button>
+      <button type="button" class="btn" id="none">Tout éteindre</button>
+    </div>
+  </div>
+
+  <div class="opts">
+    <div class="opt">
+      <span id="lbl-theme">Thème</span>
+      <div class="seg" role="group" aria-labelledby="lbl-theme">
+        <button type="button" data-theme-set="light" aria-pressed="false" aria-label="Thème clair" title="Thème clair">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+        </button>
+        <button type="button" data-theme-set="dark" aria-pressed="false" aria-label="Thème sombre" title="Thème sombre">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </div>
+    </div>
+    <div class="opt">
+      <span id="lbl-color">Couleur à poser</span>
+      <div class="seg" role="group" aria-labelledby="lbl-color">
+        <button type="button" data-glow-set="orange" aria-pressed="false"><i class="sw sw-orange"></i>Orange</button>
+        <button type="button" data-glow-set="grey" aria-pressed="false"><i class="sw sw-grey"></i>Gris</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="map" id="map">
+    <svg class="map-h" viewBox="0 0 940 330" role="group" aria-label="Carte du RER B, de Mitry–Claye et de l’aéroport Charles de Gaulle jusqu’à Gare du Nord">
+      <path class="track" d="M236 98 H436 C466 98 478 112 486 136 L502 188"></path>
+      <path class="track" d="M70 293 H436 C466 293 478 279 486 255 L502 202"></path>
+      <path class="track" d="M500 195 H835"></path>
+      <g id="halos-h"></g>
+      <g id="stops-h"></g>
+    </svg>
+    <svg class="map-v" viewBox="0 0 360 745" role="group" aria-label="Carte verticale du RER B, des terminus jusqu’à Gare du Nord">
+      <path class="track" d="M150 40 V290 C150 330 180 335 180 365"></path>
+      <path class="track" d="M210 40 V300 C210 330 180 335 180 365"></path>
+      <path class="track" d="M180 360 V730"></path>
+      <g id="halos-v"></g>
+      <g id="stops-v"></g>
+    </svg>
+  </div>
+
+  <section class="ann" aria-labelledby="ann-title">
+    <div class="ann-head">
+      <h2 class="ann-title" id="ann-title">Annonces sonores</h2>
+      <div class="ann-tools">
+        <div class="opt" id="opt-rate" hidden>
+          <span id="lbl-rate">Vitesse</span>
+          <div class="seg" role="group" aria-labelledby="lbl-rate">
+            <button type="button" data-rate="0.8" aria-pressed="false">Lente</button>
+            <button type="button" data-rate="1" aria-pressed="true">Normale</button>
+          </div>
+        </div>
+        <button type="button" class="btn with-ico" id="stop-audio">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="fill: currentColor"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>Arrêter
+        </button>
+      </div>
+    </div>
+
+    <div class="opts">
+      <div class="opt">
+        <span id="lbl-voice">Voix</span>
+        <div class="seg" role="group" aria-labelledby="lbl-voice">
+          <button type="button" data-vmode="f" aria-pressed="true">Femme</button>
+          <button type="button" data-vmode="h" aria-pressed="false">Homme</button>
+          <button type="button" data-vmode="d" aria-pressed="false">Appareil</button>
+        </div>
+      </div>
+      <div class="opt" id="opt-htone" hidden>
+        <span id="lbl-htone">Tonalité</span>
+        <div class="seg" role="group" aria-labelledby="lbl-htone">
+          <button type="button" data-htone="l" aria-pressed="true">Moins grave</button>
+          <button type="button" data-htone="g" aria-pressed="false">Grave</button>
+        </div>
+      </div>
+      <div class="opt" id="opt-echo">
+        <span id="lbl-echo">Écho</span>
+        <div class="seg" role="group" aria-labelledby="lbl-echo">
+          <button type="button" data-echo="0" aria-pressed="false">Léger</button>
+          <button type="button" data-echo="1" aria-pressed="true">Grand hall</button>
+        </div>
+      </div>
+      <div class="opt" id="opt-jingle">
+        <span id="lbl-jingle">Jingle</span>
+        <div class="seg" role="group" aria-labelledby="lbl-jingle">
+          <button type="button" data-jingle="1" aria-pressed="true">Oui</button>
+          <button type="button" data-jingle="0" aria-pressed="false">Non</button>
+        </div>
+      </div>
+      <div class="opt" id="opt-amb">
+        <span id="lbl-amb">Murmure de gare</span>
+        <div class="seg" role="group" aria-labelledby="lbl-amb">
+          <button type="button" data-amb="1" aria-pressed="true">Oui</button>
+          <button type="button" data-amb="0" aria-pressed="false">Non</button>
+        </div>
+      </div>
+      <div class="opt" id="opt-dev" hidden>
+        <span id="lbl-dev">Voix de l’appareil</span>
+        <select class="sel" id="voice-select" aria-labelledby="lbl-dev"></select>
+      </div>
+      <div class="opt" id="opt-pitch" hidden>
+        <span id="lbl-pitch">Tonalité</span>
+        <div class="seg" role="group" aria-labelledby="lbl-pitch">
+          <button type="button" data-pitch="0.7" aria-pressed="false">Grave</button>
+          <button type="button" data-pitch="1" aria-pressed="true">Normale</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="phrase">
+      <div class="phrase-title">Phrase 1 · Départ et destination</div>
+      <div class="sentence">
+        <span>Ce train partira de</span>
+        <select id="p1-from" aria-label="Gare de départ"></select>
+        <span>à destination de</span>
+        <select id="p1-to" aria-label="Gare de destination"></select>
+      </div>
+      <div class="board" id="p1-board" aria-live="polite"></div>
+      <div class="btns">
+        <button type="button" class="btn primary with-ico" id="p1-play">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="fill: currentColor"><path d="M7 4l13 8-13 8z"></path></svg>Écouter
+        </button>
+      </div>
+    </div>
+
+    <div class="phrase">
+      <div class="phrase-title">Phrase 2 · Gares non desservies</div>
+      <div class="sentence">
+        <span>Ce train passera par</span>
+        <select id="p2-via" aria-label="Gare où passe le train"></select>
+        <span>mais ne desservira pas les gares suivantes :</span>
+        <select id="p2-add" aria-label="Ajouter une gare non desservie"></select>
+      </div>
+      <div class="tags" id="p2-tags"></div>
+      <div class="board" id="p2-board" aria-live="polite"></div>
+      <div class="btns">
+        <button type="button" class="btn primary with-ico" id="p2-play">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="fill: currentColor"><path d="M7 4l13 8-13 8z"></path></svg>Écouter
+        </button>
+        <button type="button" class="btn" id="both-play">Lire les deux phrases à la suite</button>
+      </div>
+    </div>
+
+    <p class="note" id="voice-note"></p>
+    <p class="note" id="ann-status" role="status"></p>
+  </section>
+
+  <div class="lists" id="lists"></div>
+</div>
+
+<script>
+  /* l : lignes du nom ; x,y : carte horizontale ; v : carte verticale (côté du nom : l ou r) ; vl : coupure de nom propre à la carte verticale */
+  var GROUPS = [
+    { title: 'Branche Mitry–Claye', stops: [
+      { l: ['Mitry–Claye'], x: 236, y: 98, v: { x: 150, y: 40, s: 'l' } },
+      { l: ['Villeparisis', 'Mitry-le-Neuf'], x: 322, y: 98, v: { x: 150, y: 115, s: 'l' } },
+      { l: ['Vert-Galant'], x: 387, y: 98, v: { x: 150, y: 190, s: 'l' } },
+      { l: ['Sevran-Livry'], x: 441, y: 98, v: { x: 150, y: 265, s: 'l' } }
+    ]},
+    { title: 'Branche aéroport Charles de Gaulle', stops: [
+      { l: ['Aéroport', 'Ch. de Gaulle 2', 'TGV'], x: 70, y: 293, v: { x: 210, y: 40, s: 'r' } },
+      { l: ['Aéroport', 'Ch. de Gaulle 1'], x: 152, y: 293, v: { x: 210, y: 110, s: 'r' } },
+      { l: ['Parc', 'des Expositions'], x: 233, y: 293, v: { x: 210, y: 175, s: 'r' } },
+      { l: ['Villepinte'], x: 291, y: 293, v: { x: 210, y: 235, s: 'r' } },
+      { l: ['Sevran', 'Beaudottes'], x: 373, y: 293, v: { x: 210, y: 295, s: 'r' } }
+    ]},
+    { title: 'Tronc commun vers Paris', stops: [
+      { l: ['Aulnay-sous-Bois'], x: 516, y: 195, v: { x: 180, y: 385, s: 'r' } },
+      { l: ['Le Blanc-Mesnil'], x: 565, y: 195, v: { x: 180, y: 435, s: 'r' } },
+      { l: ['Drancy'], x: 609, y: 195, v: { x: 180, y: 485, s: 'r' } },
+      { l: ['Le Bourget'], x: 655, y: 195, v: { x: 180, y: 535, s: 'r' } },
+      { l: ['La Courneuve–Aubervilliers'], vl: ['La Courneuve–', 'Aubervilliers'], x: 701, y: 195, v: { x: 180, y: 590, s: 'r' } },
+      { l: ['La Plaine–Stade de France'], vl: ['La Plaine–', 'Stade de France'], x: 747, y: 195, v: { x: 180, y: 650, s: 'r' } },
+      { l: ['Gare du Nord'], x: 793, y: 195, v: { x: 180, y: 710, s: 'r' } }
+    ]}
+  ];
+
+  var KEY = 'rerb-lumieres';
+  var all = [];
+  var listsHTML = '';
+
+  GROUPS.forEach(function (g) {
+    var chips = '';
+    g.stops.forEach(function (s) {
+      s.id = all.length;
+      s.name = s.l.join(' ');
+      s.full = s.name.replace('Ch. de', 'Charles de');
+      s.spoken = s.full.replace(/–/g, ' ').replace(/\bTGV\b/, 'T G V');
+      all.push(s);
+      chips += '<button type="button" class="chip" data-id="' + s.id + '" aria-pressed="false"><span class="pip"></span>' + s.name + '</button>';
+    });
+    listsHTML += '<section><h2>' + g.title + '</h2><div class="chips">' + chips + '</div></section>';
+  });
+
+  function build(kind) {
+    var halos = '', stops = '';
+    all.forEach(function (s) {
+      var x = kind === 'v' ? s.v.x : s.x;
+      var y = kind === 'v' ? s.v.y : s.y;
+      var label;
+      if (kind === 'v') {
+        var lines = s.vl || s.l, n = lines.length;
+        var left = s.v.s === 'l';
+        var ax = left ? x - 18 : x + 18;
+        var tsp = lines.map(function (t, i) {
+          return '<tspan x="' + ax + '" dy="' + (i === 0 ? (0.35 - (n - 1) * 0.55) : 1.1) + 'em">' + t + '</tspan>';
+        }).join('');
+        label = '<text class="lbl" x="' + ax + '" y="' + y + '" text-anchor="' + (left ? 'end' : 'start') + '">' + tsp + '</text>';
+      } else {
+        var m = s.l.length;
+        var tspans = s.l.map(function (t, i) {
+          return '<tspan x="0" dy="' + (i === 0 ? (-(m - 1) * 1.15) : 1.15) + 'em">' + t + '</tspan>';
+        }).join('');
+        label = '<text class="lbl" transform="translate(' + x + ' ' + (y - 18) + ') rotate(-52)">' + tspans + '</text>';
+      }
+      halos += '<circle class="halo" data-halo="' + s.id + '" cx="' + x + '" cy="' + y + '" r="26" fill="url(#halo-orange)"></circle>';
+      stops += '<g class="stop" data-id="' + s.id + '" role="button" tabindex="0" aria-pressed="false" aria-label="' + s.name + '">' +
+        '<circle class="hit" cx="' + x + '" cy="' + y + '" r="20" fill="transparent"></circle>' +
+        '<circle class="dot" cx="' + x + '" cy="' + y + '" r="9"></circle>' + label + '</g>';
+    });
+    document.getElementById('halos-' + kind).innerHTML = halos;
+    document.getElementById('stops-' + kind).innerHTML = stops;
+  }
+  build('h');
+  build('v');
+  document.getElementById('lists').innerHTML = listsHTML;
+
+  /* lit : numéro de gare -> 'orange' ou 'grey' */
+  var lit = new Map([[9, 'orange'], [11, 'grey'], [15, 'orange']]);
+  try {
+    var saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (Array.isArray(saved)) {
+      lit = new Map();
+      saved.forEach(function (item) {
+        var id = Array.isArray(item) ? item[0] : item;
+        var c = Array.isArray(item) && item[1] === 'grey' ? 'grey' : 'orange';
+        if (id >= 0 && id < all.length) lit.set(id, c);
+      });
+    }
+  } catch (e) {}
+
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(Array.from(lit))); } catch (e) {}
+  }
+
+  function render() {
+    var counts = { orange: 0, grey: 0 };
+    var brush = currentGlow();
+    var allBrush = true;
+    lit.forEach(function (c) { counts[c]++; });
+    all.forEach(function (s) { if (lit.get(s.id) !== brush) allBrush = false; });
+
+    document.querySelectorAll('.stop').forEach(function (g) {
+      var c = lit.get(Number(g.dataset.id));
+      g.classList.toggle('on', !!c);
+      g.classList.toggle('orange', c === 'orange');
+      g.classList.toggle('grey', c === 'grey');
+      g.setAttribute('aria-pressed', c ? 'true' : 'false');
+    });
+    document.querySelectorAll('.halo').forEach(function (h) {
+      var c = lit.get(Number(h.dataset.halo));
+      h.classList.toggle('on', !!c);
+      if (c) h.setAttribute('fill', 'url(#halo-' + c + ')');
+    });
+    document.querySelectorAll('.chip').forEach(function (ch) {
+      var c = lit.get(Number(ch.dataset.id));
+      ch.setAttribute('aria-pressed', c ? 'true' : 'false');
+      if (c) ch.setAttribute('data-c', c); else ch.removeAttribute('data-c');
+    });
+
+    var n = lit.size, total = all.length;
+    var txt = n === 0 ? 'Aucune gare allumée sur ' + total :
+      n === 1 ? '1 gare allumée sur ' + total :
+      n + ' gares allumées sur ' + total;
+    if (n > 0) txt += ' (' + counts.orange + ' orange, ' + counts.grey + ' gris)';
+    document.getElementById('count').textContent = txt;
+    document.getElementById('bulb').classList.toggle('on', n > 0);
+    document.getElementById('all').disabled = allBrush;
+    document.getElementById('none').disabled = n === 0;
+  }
+
+  function toggle(id) {
+    var b = currentGlow();
+    if (lit.get(id) === b) lit.delete(id); else lit.set(id, b);
+    save(); render();
+  }
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target.closest('[data-id]') : null;
+    if (t) toggle(Number(t.dataset.id));
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var t = e.target.closest ? e.target.closest('.stop') : null;
+    if (!t) return;
+    e.preventDefault();
+    toggle(Number(t.dataset.id));
+  });
+  document.getElementById('all').addEventListener('click', function () {
+    var b = currentGlow();
+    all.forEach(function (s) { lit.set(s.id, b); });
+    save(); render();
+  });
+  document.getElementById('none').addEventListener('click', function () {
+    lit = new Map(); save(); render();
+  });
+
+  /* ---------- Annonces sonores ---------- */
+  var synth = window.speechSynthesis || null;            /* voix de l'appareil (mode « Appareil ») */
+  var AC = window.AudioContext || window.webkitAudioContext;
+  var rate = 1, pitch = 1, voice = null, voices = [];
+  var vmode = 'f';                                       /* f = femme, h = homme, d = appareil */
+  function studioName() { return vmode === 'h' ? (prefs.htone === 'g' ? 'homme' : 'homme-leger') : 'femme'; }
+  /* numéros de gare gardés en texte, comme les valeurs des listes */
+  var ann = { from: '0', to: '15', via: '9', skip: ['10', '11', '12'] };
+
+  function el(id) { return document.getElementById(id); }
+  function engineOK() { return vmode === 'd' ? !!synth : !!AC; }
+  function setStatus(t) { el('ann-status').textContent = t || ''; }
+
+  function optionsHTML(placeholder) {
+    var h = '<option value="">' + placeholder + '</option>';
+    GROUPS.forEach(function (g) {
+      h += '<optgroup label="' + g.title + '">';
+      g.stops.forEach(function (s) { h += '<option value="' + s.id + '">' + s.full + '</option>'; });
+      h += '</optgroup>';
+    });
+    return h;
+  }
+  el('p1-from').innerHTML = optionsHTML('Choisir une gare');
+  el('p1-to').innerHTML = optionsHTML('Choisir une gare');
+  el('p2-via').innerHTML = optionsHTML('Choisir une gare');
+  el('p2-add').innerHTML = optionsHTML('Ajouter une gare…');
+  el('p1-from').value = ann.from;
+  el('p1-to').value = ann.to;
+  el('p2-via').value = ann.via;
+
+  function nm(id, speech) { return speech ? all[id].spoken : all[id].full; }
+  function joinList(arr) {
+    return arr.length < 2 ? arr.join('') : arr.slice(0, -1).join(', ') + ' et ' + arr[arr.length - 1];
+  }
+  function p1Text(sp) {
+    if (ann.from === '' || ann.to === '' || ann.from === ann.to) return null;
+    return 'Ce train partira de ' + nm(ann.from, sp) + ' à destination de ' + nm(ann.to, sp) + '.';
+  }
+  function p2Text(sp) {
+    if (ann.via === '' || !ann.skip.length) return null;
+    var names = ann.skip.map(function (id) { return nm(id, sp); });
+    return 'Ce train passera par ' + nm(ann.via, sp) + ', mais ne desservira pas ' +
+      (names.length === 1 ? 'la gare suivante : ' : 'les gares suivantes : ') + joinList(names) + '.';
+  }
+
+  /* Morceaux enregistrés : [nom du morceau, pause après en secondes]
+     nXc = nom au milieu d'une phrase, nXf = nom en fin de phrase, nXe = « et » + nom */
+  function p1Seq() {
+    if (ann.from === '' || ann.to === '' || ann.from === ann.to) return null;
+    return [['intro1', 0.05], ['n' + ann.from + 'c', 0.14], ['mid1', 0.05], ['n' + ann.to + 'f', 0]];
+  }
+  function p2Seq() {
+    if (ann.via === '' || !ann.skip.length) return null;
+    var n = ann.skip.length;
+    var s = [['intro2', 0.05], ['n' + ann.via + 'c', 0.16], [n === 1 ? 'mid2s' : 'mid2p', 0.24]];
+    ann.skip.forEach(function (id, i) {
+      var last = i === n - 1;
+      s.push([last ? 'n' + id + (n > 1 ? 'e' : 'f') : 'n' + id + 'c', last ? 0 : 0.1]);
+    });
+    return s;
+  }
+
+  function renderAnn() {
+    var t1 = p1Text(false), t2 = p2Text(false), ok = engineOK();
+    if (ann.from !== '' && ann.from === ann.to) {
+      el('p1-board').textContent = 'Choisis deux gares différentes.';
+    } else {
+      el('p1-board').textContent = t1 || ('Ce train partira de ' + (ann.from !== '' ? nm(ann.from) : '…') +
+        ' à destination de ' + (ann.to !== '' ? nm(ann.to) : '…') + '.');
+    }
+    el('p2-board').textContent = t2 || ('Ce train passera par ' + (ann.via !== '' ? nm(ann.via) : '…') +
+      ', mais ne desservira pas les gares suivantes : …');
+    el('p2-tags').innerHTML = ann.skip.map(function (id) {
+      return '<button type="button" class="tag" data-rm="' + id + '" aria-label="Retirer ' + all[id].full + '">' +
+        all[id].full + '<span aria-hidden="true">×</span></button>';
+    }).join('');
+    el('p1-play').disabled = !t1 || !ok;
+    el('p2-play').disabled = !t2 || !ok;
+    el('both-play').disabled = !(t1 && t2) || !ok;
+    el('stop-audio').disabled = !ok;
+  }
+
+  el('p1-from').addEventListener('change', function () { ann.from = this.value; setStatus(''); renderAnn(); });
+  el('p1-to').addEventListener('change', function () { ann.to = this.value; setStatus(''); renderAnn(); });
+  el('p2-via').addEventListener('change', function () {
+    ann.via = this.value;
+    ann.skip = ann.skip.filter(function (id) { return id !== ann.via; });
+    setStatus(''); renderAnn();
+  });
+  el('p2-add').addEventListener('change', function () {
+    var v = this.value;
+    this.value = '';
+    setStatus('');
+    if (v === '') return;
+    if (v === ann.via) { setStatus('Le train passe déjà par cette gare : choisis-en une autre.'); return; }
+    if (ann.skip.indexOf(v) < 0) ann.skip.push(v);
+    renderAnn();
+  });
+  el('p2-tags').addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target.closest('[data-rm]') : null;
+    if (!t) return;
+    ann.skip = ann.skip.filter(function (id) { return id !== t.dataset.rm; });
+    renderAnn();
+  });
+
+  /* ---------- Voix de l'appareil (mode « Appareil ») ---------- */
+  var MALE = /(thomas|paul|henri|r[ée]my|jacques|claude|antoine|mathieu|nicolas|guillaume|yannick|maxime|bruno)/i;
+  var FEMALE = /(am[ée]lie|audrey|aur[ée]lie|hortense|julie|denise|[ée]loise|marie|c[ée]line|virginie|sylvie|google fran[cç]ais)/i;
+  function voiceLabel(v) {
+    var g = MALE.test(v.name) ? ' · homme' : FEMALE.test(v.name) ? ' · femme' : '';
+    return v.name + ' (' + v.lang + ')' + g;
+  }
+  function defaultVoice() {
+    return voices.filter(function (v) { return /^fr[-_]FR/i.test(v.lang); })[0] || voices[0] || null;
+  }
+  function voiceNote() {
+    var txt;
+    if (!engineOK()) {
+      txt = vmode === 'd'
+        ? 'Ce navigateur ne sait pas lire du texte à voix haute : choisis Femme ou Homme.'
+        : 'Ce navigateur ne gère pas le son web : essaie le mode « Appareil ».';
+    } else if (vmode === 'f') {
+      txt = 'Voix de femme : jeu de données SIWIS (Université d’Édimbourg, licence CC BY 4.0), synthèse neuronale Piper. Les phrases sont montées à partir de morceaux préparés à l’avance, puis passées dans un haut-parleur de gare avec écho et réverbération de hall.';
+    } else if (vmode === 'h') {
+      txt = 'Voix d’homme : la voix SIWIS (Université d’Édimbourg, CC BY 4.0) abaissée en hauteur et en timbre (un peu ou beaucoup, au choix), car aucune voix d’homme française de bonne qualité n’était disponible. Les phrases sont montées à partir de morceaux préparés à l’avance, puis passées dans un haut-parleur de gare avec écho et réverbération de hall.';
+    } else {
+      var hasMale = voices.some(function (v) { return MALE.test(v.name); });
+      txt = (voice ? 'Voix utilisée : ' + voice.name + '. ' : 'Aucune voix française trouvée sur cet appareil : la voix par défaut sera utilisée. ') +
+        (hasMale ? '' : 'Aucune voix d’homme reconnue ici. ') +
+        'Ce mode lit le texte avec la voix de ton appareil, sans écho ni ambiance.';
+    }
+    el('voice-note').textContent = txt;
+  }
+  function pickVoice() {
+    if (synth) {
+      voices = (synth.getVoices() || []).filter(function (v) { return /^fr/i.test(v.lang); });
+      var sel = el('voice-select');
+      sel.innerHTML = '<option value="">Voix automatique</option>' + voices.map(function (v, i) {
+        return '<option value="' + i + '">' + voiceLabel(v) + '</option>';
+      }).join('');
+      var idx = -1, want = prefs.voice;
+      if (typeof want === 'string' && want !== '') voices.forEach(function (v, i) { if (v.name === want) idx = i; });
+      if (idx >= 0) { voice = voices[idx]; sel.value = String(idx); }
+      else { voice = defaultVoice(); sel.value = ''; }
+    }
+    voiceNote();
+  }
+  el('voice-select').addEventListener('change', function () {
+    var i = this.value === '' ? -1 : Number(this.value);
+    voice = i >= 0 ? voices[i] : defaultVoice();
+    prefs.voice = i >= 0 ? voices[i].name : '';
+    savePrefs();
+    voiceNote();
+  });
+  if (synth && synth.addEventListener) synth.addEventListener('voiceschanged', pickVoice);
+
+  var sayToken = 0;
+  function sayDevice(texts) {
+    if (!synth) return;
+    setStatus('');
+    synth.cancel();
+    texts.forEach(function (t) {
+      var u = new SpeechSynthesisUtterance(t);
+      u.lang = 'fr-FR';
+      u.rate = rate;
+      u.pitch = pitch;
+      if (voice) u.voice = voice;
+      u.onerror = function (ev) {
+        if (ev.error !== 'canceled' && ev.error !== 'interrupted') {
+          setStatus('La lecture audio a échoué (' + ev.error + '). Vérifie que le son de ton appareil est activé.');
+        }
+      };
+      synth.speak(u);
+    });
+  }
+
+  /* ---------- Voix de studio : haut-parleur de gare, écho, hall, murmure ---------- */
+  var actx = null, irBuf = null, noiseBuf = null, sprites = {}, indexJSON = null;
+  var run = null, runToken = 0, finishTimer = null;
+
+  function getCtx() {
+    if (actx) return actx;
+    if (!AC) return null;
+    try { actx = new AC(); } catch (e) { return null; }
+    return actx;
+  }
+
+  /* réponse impulsionnelle d'un grand hall : réflexions précoces puis longue queue qui s'assombrit */
+  function makeIR(ctx) {
+    if (irBuf && irBuf.sampleRate === ctx.sampleRate) return irBuf;
+    var sr = ctx.sampleRate, len = Math.floor(sr * 3.6), buf = ctx.createBuffer(2, len, sr), att = Math.floor(sr * 0.004);
+    for (var c = 0; c < 2; c++) {
+      var d = buf.getChannelData(c), lp = 0;
+      for (var i = 0; i < len; i++) {
+        var t = i / len, k = 0.55 - 0.45 * t;
+        lp += k * ((Math.random() * 2 - 1) - lp);
+        d[i] = lp * Math.pow(1 - t, 2.4) * (i < att ? i / att : 1);
+      }
+      [0.021, 0.034, 0.052, 0.077, 0.11, 0.16].forEach(function (sec, j) {
+        var p = Math.floor(sec * sr + c * 37 * (j + 1));
+        if (p < len) d[p] += (j % 2 ? -1 : 1) * 0.5 / (j + 1);
+      });
+    }
+    irBuf = buf;
+    return buf;
+  }
+  function shaperCurve() {
+    var n = 1024, c = new Float32Array(n);
+    for (var i = 0; i < n; i++) { var x = i * 2 / (n - 1) - 1; c[i] = Math.tanh(2.2 * x) / Math.tanh(2.2); }
+    return c;
+  }
+  function biquad(ctx, type, f, q, g) {
+    var b = ctx.createBiquadFilter();
+    b.type = type; b.frequency.value = f;
+    if (q !== undefined) b.Q.value = q;
+    if (g !== undefined) b.gain.value = g;
+    return b;
+  }
+  function gainNode(ctx, v) { var g = ctx.createGain(); g.gain.value = v; return g; }
+
+  /* strong = vrai écho de grand hall ; sinon écho léger */
+  function buildHall(ctx, strong) {
+    var nodes = [];
+    function keep(n) { nodes.push(n); return n; }
+    var limiter = keep(ctx.createDynamicsCompressor());
+    limiter.threshold.value = -4; limiter.ratio.value = 14; limiter.knee.value = 3;
+    limiter.attack.value = 0.003; limiter.release.value = 0.15;
+    limiter.connect(ctx.destination);
+    var master = keep(gainNode(ctx, 0.7));
+    master.connect(limiter);
+
+    /* chaîne « haut-parleur de gare » : voix un peu étroite, nasale, légèrement saturée */
+    var input = keep(gainNode(ctx, 1.0));
+    var hp = keep(biquad(ctx, 'highpass', 330, 0.7));
+    var pk = keep(biquad(ctx, 'peaking', 1900, 0.9, 5));
+    var lp = keep(biquad(ctx, 'lowpass', 4800, 0.7));
+    var sh = keep(ctx.createWaveShaper()); sh.curve = shaperCurve(); sh.oversample = '2x';
+    var comp = keep(ctx.createDynamicsCompressor());
+    comp.threshold.value = -22; comp.ratio.value = 5; comp.attack.value = 0.004; comp.release.value = 0.18;
+    var pa = keep(gainNode(ctx, 1));
+    input.connect(hp); hp.connect(pk); pk.connect(lp); lp.connect(sh); sh.connect(comp); comp.connect(pa);
+
+    var dry = keep(gainNode(ctx, strong ? 0.62 : 0.85));
+    pa.connect(dry); dry.connect(master);
+
+    /* réverbération de hall */
+    var pre = keep(ctx.createDelay(0.2)); pre.delayTime.value = 0.03;
+    var conv = keep(ctx.createConvolver()); conv.buffer = makeIR(ctx);
+    var wet = keep(gainNode(ctx, strong ? 1.2 : 0.6));
+    pa.connect(pre); pre.connect(conv); conv.connect(wet); wet.connect(master);
+
+    /* écho qui rebondit sur les murs, de plus en plus sourd */
+    var echo = keep(ctx.createDelay(1.5)); echo.delayTime.value = strong ? 0.31 : 0.22;
+    var elp = keep(biquad(ctx, 'lowpass', 2600));
+    var fb = keep(gainNode(ctx, strong ? 0.5 : 0.3));
+    var eout = keep(gainNode(ctx, strong ? 0.5 : 0.25));
+    pa.connect(echo); echo.connect(elp); elp.connect(fb); fb.connect(echo);
+    elp.connect(eout); eout.connect(master); eout.connect(conv);
+
+    /* entrée du jingle : son direct, avec la réverbération du hall, sans le filtre de haut-parleur */
+    var jin = keep(gainNode(ctx, 1.9));
+    var jdry = keep(gainNode(ctx, 0.9));
+    var jsend = keep(gainNode(ctx, strong ? 0.6 : 0.3));
+    jin.connect(jdry); jdry.connect(master); jin.connect(jsend); jsend.connect(conv);
+
+    return { input: input, jin: jin, master: master, conv: conv, nodes: nodes };
+  }
+
+  function chime(ctx, hall, t, f) {
+    var g = ctx.createGain(), o1 = ctx.createOscillator(), o2 = ctx.createOscillator();
+    o1.type = 'sine'; o1.frequency.value = f;
+    o2.type = 'triangle'; o2.frequency.value = f * 2;
+    var g2 = gainNode(ctx, 0.12);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.16, t + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 1.5);
+    o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(hall.input);
+    o1.start(t); o2.start(t); o1.stop(t + 1.6); o2.stop(t + 1.6);
+  }
+
+  /* murmure de foule : trois bandes de bruit dont le volume ondule lentement, envoyées dans le hall */
+  function startAmbience(ctx, hall, t0, vol) {
+    if (!noiseBuf || noiseBuf.sampleRate !== ctx.sampleRate) {
+      noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate);
+      var d = noiseBuf.getChannelData(0);
+      for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    var out = gainNode(ctx, 0);
+    out.gain.setValueAtTime(0, t0);
+    out.gain.linearRampToValueAtTime(vol, t0 + 1.2);
+    var send = gainNode(ctx, 0.7);
+    out.connect(hall.master); out.connect(send); send.connect(hall.conv);
+    var srcs = [];
+    [[420, 1.6, 0.55], [900, 2.0, 0.5], [2100, 2.2, 0.3]].forEach(function (b, i) {
+      var src = ctx.createBufferSource(); src.buffer = noiseBuf; src.loop = true;
+      src.playbackRate.value = 0.9 + i * 0.13;
+      var bp = biquad(ctx, 'bandpass', b[0], b[1]);
+      var g = gainNode(ctx, b[2] * 0.5);
+      var lfo = ctx.createOscillator(); lfo.frequency.value = 0.35 + i * 0.37;
+      var lg = gainNode(ctx, b[2] * 0.5);
+      lfo.connect(lg); lg.connect(g.gain);
+      src.connect(bp); bp.connect(g); g.connect(out);
+      src.start(t0); lfo.start(t0);
+      srcs.push(src, lfo);
+    });
+    return {
+      fade: function (t, secs) {
+        out.gain.setValueAtTime(vol, t);
+        out.gain.linearRampToValueAtTime(0, t + secs);
+      },
+      stop: function (t) { srcs.forEach(function (s) { try { s.stop(t); } catch (e) {} }); },
+      nodes: [out, send]
+    };
+  }
+
+  function loadIndex() {
+    if (indexJSON) return Promise.resolve(indexJSON);
+    return fetch('audio/index.json').then(function (r) {
+      if (!r.ok) throw new Error('http ' + r.status);
+      return r.json();
+    }).then(function (j) { indexJSON = j; return j; });
+  }
+  function loadSprite(name) {
+    if (sprites[name]) return Promise.resolve(sprites[name]);
+    var ctx = getCtx();
+    return fetch('audio/' + name + '.mp3').then(function (r) {
+      if (!r.ok) throw new Error('http ' + r.status);
+      return r.arrayBuffer();
+    }).then(function (ab) {
+      return new Promise(function (res, rej) { ctx.decodeAudioData(ab, res, rej); });
+    }).then(function (buf) { sprites[name] = buf; return buf; });
+  }
+
+  var jingleBuf = null;
+  function loadJingle() {
+    if (jingleBuf) return Promise.resolve(jingleBuf);
+    var ctx = getCtx();
+    return fetch('audio/jingle.mp3').then(function (r) {
+      if (!r.ok) throw new Error('http ' + r.status);
+      return r.arrayBuffer();
+    }).then(function (ab) {
+      return new Promise(function (res, rej) { ctx.decodeAudioData(ab, res, rej); });
+    }).then(function (b) { jingleBuf = b; return b; }).catch(function () { return null; });
+  }
+
+  function stopAll(hard) {
+    clearTimeout(finishTimer);
+    var r = run;
+    run = null;
+    if (!r || !actx) return;
+    var t = actx.currentTime;
+    try {
+      r.srcs.forEach(function (s) { try { s.stop(t + (hard ? 0 : 0.3)); } catch (e) {} });
+      r.hall.master.gain.cancelScheduledValues(t);
+      r.hall.master.gain.setValueAtTime(r.hall.master.gain.value, t);
+      r.hall.master.gain.linearRampToValueAtTime(0, t + (hard ? 0.08 : 0.6));
+      if (r.amb) r.amb.stop(t + 0.7);
+    } catch (e) {}
+    setTimeout(function () {
+      try {
+        r.hall.nodes.concat(r.amb ? r.amb.nodes : []).forEach(function (n) { n.disconnect(); });
+      } catch (e) {}
+    }, 1300);
+  }
+
+  function schedule(ctx, idx, buf, seqs, token, jbuf) {
+    var strong = prefs.echo !== 0;
+    var hall = buildHall(ctx, strong);
+    var t0 = ctx.currentTime + 0.15, t = t0, srcs = [], amb = null;
+    if (prefs.amb !== 0) amb = startAmbience(ctx, hall, t0, strong ? 0.22 : 0.16);
+    if (prefs.jingle !== 0) {
+      if (jbuf) {
+        var js = ctx.createBufferSource();
+        js.buffer = jbuf;
+        js.connect(hall.jin);
+        js.start(t0 + 0.1);
+        srcs.push(js);
+        t = t0 + 0.1 + jbuf.duration + 0.2;
+      } else {
+        chime(ctx, hall, t0 + 0.3, 659.25);
+        chime(ctx, hall, t0 + 0.85, 523.25);
+        t = t0 + 2.4;
+      }
+    } else {
+      t = t0 + (amb ? 1.2 : 0.05);
+    }
+    seqs.forEach(function (seq, si) {
+      if (si > 0) t += 0.9;
+      seq.forEach(function (it) {
+        var c = idx[it[0]];
+        if (!c) return;
+        var src = ctx.createBufferSource();
+        src.buffer = buf;
+        src.connect(hall.input);
+        src.start(Math.max(ctx.currentTime, t - 0.1), Math.max(0, c[0] - 0.1), c[1] + 0.2);
+        srcs.push(src);
+        t += c[1] + it[1];
+      });
+    });
+    var tail = strong ? 3.8 : 2.2;
+    if (amb) amb.fade(t + 0.4, tail - 0.4);
+    run = { hall: hall, srcs: srcs, amb: amb, token: token };
+    finishTimer = setTimeout(function () {
+      if (run && run.token === token) stopAll(false);
+    }, Math.max(0, (t + tail + 0.3 - ctx.currentTime)) * 1000);
+  }
+
+  function playStudio(seqs) {
+    var ctx = getCtx();
+    if (!ctx) { setStatus('Ce navigateur ne gère pas le son web.'); return; }
+    try { if (ctx.state === 'suspended' && ctx.resume) ctx.resume(); } catch (e) {}
+    stopAll(true);
+    var token = ++runToken;
+    var name = studioName();
+    setStatus('Chargement de la voix…');
+    Promise.all([loadIndex(), loadSprite(name), prefs.jingle !== 0 ? loadJingle() : Promise.resolve(null)]).then(function (r) {
+      if (token !== runToken) return;
+      setStatus('');
+      schedule(ctx, r[0][name], r[1], seqs, token, r[2]);
+    }).catch(function () {
+      if (token !== runToken) return;
+      setStatus('Les enregistrements n’ont pas pu être chargés. Choisis « Appareil » pour utiliser la voix de ton téléphone ou de ton ordinateur.');
+    });
+  }
+
+  function speak(which) {
+    if (vmode === 'd') {
+      var texts = which.map(function (k) { return k === 1 ? p1Text(true) : p2Text(true); }).filter(Boolean);
+      if (texts.length) sayDevice(texts);
+    } else {
+      var seqs = which.map(function (k) { return k === 1 ? p1Seq() : p2Seq(); }).filter(Boolean);
+      if (seqs.length) playStudio(seqs);
+    }
+  }
+  el('p1-play').addEventListener('click', function () { speak([1]); });
+  el('p2-play').addEventListener('click', function () { speak([2]); });
+  el('both-play').addEventListener('click', function () { speak([1, 2]); });
+  el('stop-audio').addEventListener('click', function () {
+    runToken++;
+    stopAll(false);
+    if (synth) synth.cancel();
+  });
+
+  /* ---------- Réglages de la section ---------- */
+  function markSeg(attr, val) {
+    document.querySelectorAll('[' + attr + ']').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute(attr)) === String(val) ? 'true' : 'false');
+    });
+  }
+  function syncVisibility() {
+    var dev = vmode === 'd';
+    el('opt-htone').hidden = vmode !== 'h';
+    el('opt-dev').hidden = !dev;
+    el('opt-pitch').hidden = !dev;
+    el('opt-rate').hidden = !dev;
+    el('opt-echo').hidden = dev;
+    el('opt-amb').hidden = dev;
+    el('opt-jingle').hidden = dev;
+  }
+  function restoreAnnPrefs() {
+    vmode = prefs.vmode === 'h' || prefs.vmode === 'd' ? prefs.vmode : 'f';
+    pitch = prefs.pitch === 0.7 ? 0.7 : 1;
+    markSeg('data-vmode', vmode);
+    markSeg('data-pitch', pitch);
+    markSeg('data-htone', prefs.htone === 'g' ? 'g' : 'l');
+    markSeg('data-echo', prefs.echo === 0 ? 0 : 1);
+    markSeg('data-jingle', prefs.jingle === 0 ? 0 : 1);
+    markSeg('data-amb', prefs.amb === 0 ? 0 : 1);
+    syncVisibility();
+  }
+  document.querySelectorAll('[data-vmode]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      runToken++; stopAll(true); if (synth) synth.cancel();
+      vmode = b.dataset.vmode; prefs.vmode = vmode; savePrefs();
+      markSeg('data-vmode', vmode); syncVisibility(); setStatus(''); voiceNote(); renderAnn();
+    });
+  });
+  document.querySelectorAll('[data-htone]').forEach(function (b) {
+    b.addEventListener('click', function () { prefs.htone = b.dataset.htone; savePrefs(); markSeg('data-htone', prefs.htone); });
+  });
+  document.querySelectorAll('[data-echo]').forEach(function (b) {
+    b.addEventListener('click', function () { prefs.echo = Number(b.dataset.echo); savePrefs(); markSeg('data-echo', prefs.echo); });
+  });
+  document.querySelectorAll('[data-jingle]').forEach(function (b) {
+    b.addEventListener('click', function () { prefs.jingle = Number(b.dataset.jingle); savePrefs(); markSeg('data-jingle', prefs.jingle); });
+  });
+  document.querySelectorAll('[data-amb]').forEach(function (b) {
+    b.addEventListener('click', function () { prefs.amb = Number(b.dataset.amb); savePrefs(); markSeg('data-amb', prefs.amb); });
+  });
+  document.querySelectorAll('[data-pitch]').forEach(function (b) {
+    b.addEventListener('click', function () { pitch = Number(b.dataset.pitch); prefs.pitch = pitch; savePrefs(); markSeg('data-pitch', pitch); });
+  });
+  document.querySelectorAll('[data-rate]').forEach(function (b) {
+    b.addEventListener('click', function () { rate = Number(b.dataset.rate); markSeg('data-rate', rate); });
+  });
+
+  var PREF = 'rerb-prefs';
+  var root = document.documentElement;
+  var prefs = {};
+  try { prefs = JSON.parse(localStorage.getItem(PREF) || '{}') || {}; } catch (e) { prefs = {}; }
+  var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+  function currentTheme() {
+    var a = root.getAttribute('data-theme');
+    if (a === 'light' || a === 'dark') return a;
+    return mq && mq.matches ? 'dark' : 'light';
+  }
+  function currentGlow() { return prefs.glow === 'grey' ? 'grey' : 'orange'; }
+
+  function markPressed() {
+    var th = currentTheme(), gl = currentGlow();
+    document.querySelectorAll('[data-theme-set]').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.dataset.themeSet === th ? 'true' : 'false');
+    });
+    document.querySelectorAll('[data-glow-set]').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.dataset.glowSet === gl ? 'true' : 'false');
+    });
+  }
+  function applyPrefs() {
+    if (prefs.theme === 'light' || prefs.theme === 'dark') root.setAttribute('data-theme', prefs.theme);
+    if (currentGlow() === 'grey') root.setAttribute('data-glow', 'grey'); else root.removeAttribute('data-glow');
+    markPressed();
+  }
+  function savePrefs() {
+    try { localStorage.setItem(PREF, JSON.stringify(prefs)); } catch (e) {}
+  }
+
+  document.querySelectorAll('[data-theme-set]').forEach(function (b) {
+    b.addEventListener('click', function () { prefs.theme = b.dataset.themeSet; savePrefs(); applyPrefs(); });
+  });
+  document.querySelectorAll('[data-glow-set]').forEach(function (b) {
+    b.addEventListener('click', function () { prefs.glow = b.dataset.glowSet; savePrefs(); applyPrefs(); render(); });
+  });
+  if (mq && mq.addEventListener) mq.addEventListener('change', markPressed);
+  if (window.MutationObserver) new MutationObserver(markPressed).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+
+  applyPrefs();
+  render();
+  restoreAnnPrefs();
+  pickVoice();
+  renderAnn();
+</script>
+
+</body></html>
