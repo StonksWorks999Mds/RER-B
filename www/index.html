@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>RER B Lumières</title>
+<title>Simulation trajet RERB</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Barlow+Semi+Condensed:wght@500;600&display=swap">
 <style>
@@ -72,7 +72,8 @@
     font-family: var(--body);
     font-size: 16px;
     line-height: 1.45;
-    padding-block: 24px 40px;
+    padding-top: 24px;
+    padding-bottom: 40px;
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
     -webkit-tap-highlight-color: transparent;
@@ -88,7 +89,7 @@
   }
   h1 {
     margin: 0; font-family: var(--display); font-weight: 700;
-    font-size: clamp(28px, 6vw, 40px); line-height: 1.05; letter-spacing: 0.01em;
+    font-size: 32px; font-size: clamp(26px, 6vw, 40px); line-height: 1.05; letter-spacing: 0.01em;
     text-wrap: balance;
   }
   .head p { margin: 2px 0 0; color: var(--muted); }
@@ -136,9 +137,10 @@
     overflow-x: auto; -webkit-overflow-scrolling: touch;
   }
   .map svg { display: block; width: 100%; height: auto; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
-  .map svg.map-h { min-width: 760px; }
+  .map svg.map-h { min-width: 560px; overflow: visible; }
+  .map svg.map-h .lbl { font-size: 17px; }
   .map svg.map-v { display: none; max-width: 460px; margin: 0 auto; }
-  @media (max-width: 720px) {
+  @media (max-width: 720px) and (orientation: portrait) {
     .map svg.map-h { display: none; }
     .map svg.map-v { display: block; }
   }
@@ -199,7 +201,7 @@
   .opt .sel { max-width: 250px; }
   .sel:focus-visible { outline: 3px solid var(--fg); outline-offset: 2px; }
 
-  .lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; }
+  .lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
   .lists section { min-width: 0; }
   h2 {
     margin: 0 0 10px; font-size: 13px; font-weight: 600; letter-spacing: 0.08em;
@@ -218,6 +220,30 @@
   .chip[data-c="orange"] .pip { background: var(--orange); box-shadow: 0 0 8px 2px var(--orange); }
   .chip[data-c="grey"] { border-color: var(--grey); }
   .chip[data-c="grey"] .pip { background: var(--grey); box-shadow: 0 0 8px 2px var(--grey); }
+
+  /* Petits écrans (téléphones étroits) */
+  @media (max-width: 360px) {
+    body { font-size: 15px; }
+    .head { gap: 10px; }
+    .badge { width: 40px; height: 40px; font-size: 24px; }
+    .btn { padding: 8px 12px; }
+    .sentence { font-size: 16px; }
+    .board { font-size: 17px; padding: 12px; }
+    .phrase { padding: 12px; }
+    .ann h2.ann-title { font-size: 24px; }
+  }
+  /* Paysage sur téléphone (peu de hauteur) : on compacte l'en-tête */
+  @media (orientation: landscape) and (max-height: 520px) {
+    body { padding-top: 12px; padding-bottom: 20px; }
+    .wrap { gap: 12px; }
+    h1 { font-size: 26px; }
+    .badge { width: 38px; height: 38px; font-size: 22px; }
+    .head p { font-size: 14px; }
+  }
+  /* Grands écrans */
+  @media (min-width: 1100px) {
+    .wrap { max-width: 1200px; }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .dot, .halo, .lbl, .bulb, .pip { transition: none; }
@@ -278,7 +304,7 @@
   </div>
 
   <div class="map" id="map">
-    <svg class="map-h" viewBox="0 0 940 330" role="group" aria-label="Carte du RER B, de Mitry–Claye et de l’aéroport Charles de Gaulle jusqu’à Gare du Nord">
+    <svg class="map-h" viewBox="0 -35 960 365" role="group" aria-label="Carte du RER B, de Mitry–Claye et de l’aéroport Charles de Gaulle jusqu’à Gare du Nord">
       <path class="track" d="M236 98 H436 C466 98 478 112 486 136 L502 188"></path>
       <path class="track" d="M70 293 H436 C466 293 478 279 486 255 L502 202"></path>
       <path class="track" d="M500 195 H835"></path>
@@ -683,7 +709,7 @@
     } else if (vmode === 'f') {
       txt = 'Voix de femme : jeu de données SIWIS (Université d’Édimbourg, licence CC BY 4.0), synthèse neuronale Piper. Les phrases sont montées à partir de morceaux préparés à l’avance, puis passées dans un haut-parleur de gare avec écho et réverbération de hall.';
     } else if (vmode === 'h') {
-      txt = 'Voix d’homme : la voix SIWIS (Université d’Édimbourg, CC BY 4.0) abaissée en hauteur et en timbre (un peu ou beaucoup, au choix), car aucune voix d’homme française de bonne qualité n’était disponible. Les phrases sont montées à partir de morceaux préparés à l’avance, puis passées dans un haut-parleur de gare avec écho et réverbération de hall.';
+      txt = 'Voix d’homme : la voix SIWIS (Université d’Édimbourg, CC BY 4.0) transformée en voix masculine (hauteur et timbre abaissés, plus ou moins grave au choix), car aucune voix d’homme française de bonne qualité n’était disponible. Les phrases sont montées à partir de morceaux préparés à l’avance, puis passées dans un haut-parleur de gare avec écho et réverbération de hall.';
     } else {
       var hasMale = voices.some(function (v) { return MALE.test(v.name); });
       txt = (voice ? 'Voix utilisée : ' + voice.name + '. ' : 'Aucune voix française trouvée sur cet appareil : la voix par défaut sera utilisée. ') +
