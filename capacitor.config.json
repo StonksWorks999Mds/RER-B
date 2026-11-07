@@ -1,6 +1,6 @@
 {
   "appId": "com.rerb.lumieres",
-  "appName": "RER B Lumières",
+  "appName": "Simulation trajet RERB",
   "webDir": "www",
   "android": { "allowMixedContent": false }
 }
