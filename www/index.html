@@ -72,7 +72,7 @@
     --glow-text: var(--grey-text);
     --on-glow: #0f1623;
   }
-
+ 
   body {
     background: var(--bg);
     color: var(--fg);
@@ -86,7 +86,7 @@
     -webkit-tap-highlight-color: transparent;
   }
   .wrap { max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
-
+ 
   .head { display: flex; align-items: center; gap: 14px; }
   .badge {
     flex: none; width: 46px; height: 46px; border-radius: 50%;
@@ -100,7 +100,7 @@
     text-wrap: balance;
   }
   .head p { margin: 2px 0 0; color: var(--muted); }
-
+ 
   .bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
   .count { display: flex; align-items: center; gap: 10px; font-weight: 600; font-variant-numeric: tabular-nums; min-width: 0; }
   .bulb {
@@ -118,7 +118,7 @@
   .btn.primary { background: var(--glow); border-color: var(--glow); color: var(--on-glow); }
   .btn:disabled { opacity: .45; cursor: default; }
   .btn:focus-visible, .chip:focus-visible { outline: 3px solid var(--fg); outline-offset: 2px; }
-
+ 
   .opts { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; }
   .opt { display: flex; align-items: center; gap: 10px; min-width: 0; }
   .opt > span { color: var(--muted); font-size: 14px; font-weight: 600; }
@@ -138,7 +138,7 @@
   .sw { flex: none; width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--border); }
   .sw-orange { background: var(--orange); }
   .sw-grey { background: var(--grey); }
-
+ 
   .map {
     background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
     overflow-x: auto; -webkit-overflow-scrolling: touch;
@@ -152,7 +152,7 @@
     .map svg.map-v { display: block; }
   }
   .track { fill: none; stroke: var(--line); stroke-width: 16; stroke-linecap: round; stroke-linejoin: round; }
-
+ 
   .stop { cursor: pointer; outline: none; }
   .hit { stroke: none; }
   .stop:focus-visible .hit { stroke: var(--fg); stroke-width: 2; stroke-dasharray: 3 3; }
@@ -164,10 +164,10 @@
   .lbl { font-family: var(--body); font-size: 15.5px; font-weight: 600; fill: var(--fg); transition: fill .2s; }
   .stop.orange .lbl { fill: var(--orange-text); }
   .stop.grey .lbl { fill: var(--grey-text); }
-
+ 
   [hidden] { display: none !important; }
   .btn.with-ico { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-
+ 
   .ann { display: flex; flex-direction: column; gap: 14px; }
   .ann-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; }
   .ann h2.ann-title {
@@ -213,7 +213,7 @@
   .freetext:focus-visible { outline: 3px solid var(--fg); outline-offset: 2px; }
   .opt .sel { max-width: 250px; }
   .sel:focus-visible { outline: 3px solid var(--fg); outline-offset: 2px; }
-
+ 
   .lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
   .lists section { min-width: 0; }
   h2 {
@@ -233,7 +233,7 @@
   .chip[data-c="orange"] .pip { background: var(--orange); box-shadow: 0 0 8px 2px var(--orange); }
   .chip[data-c="grey"] { border-color: var(--grey); }
   .chip[data-c="grey"] .pip { background: var(--grey); box-shadow: 0 0 8px 2px var(--grey); }
-
+ 
   /* Petits écrans (téléphones étroits) */
   @media (max-width: 360px) {
     body { font-size: 15px; }
@@ -263,12 +263,19 @@
     .wrap { max-width: 1500px; }
     .btn, .seg button { min-height: 52px; }
   }
-
+  @media (min-width: 1400px) {
+    .btn:focus-visible, .chip:focus-visible, .seg button:focus-visible,
+    .sentence select:focus-visible, .tag:focus-visible, .freetext:focus-visible, .sel:focus-visible {
+      outline-width: 4px; outline-offset: 3px;
+    }
+    .stop:focus-visible .hit { stroke-width: 3; }
+  }
+ 
   @media (prefers-reduced-motion: reduce) {
     .dot, .halo, .lbl, .bulb, .pip { transition: none; }
   }
 </style>
-
+ 
 <svg width="0" height="0" style="position: absolute" aria-hidden="true" focusable="false">
   <defs>
     <radialGradient id="halo-orange">
@@ -283,7 +290,7 @@
     </radialGradient>
   </defs>
 </svg>
-
+ 
 <div class="wrap">
   <header class="head">
     <div class="badge" aria-hidden="true">B</div>
@@ -292,7 +299,7 @@
       <p>Choisis une couleur, puis touche une gare ou un point blanc pour l’allumer. Touche-la avec l’autre couleur pour la changer.</p>
     </div>
   </header>
-
+ 
   <div class="bar">
     <div class="count" aria-live="polite"><span class="bulb" id="bulb"></span><span id="count"></span></div>
     <div class="btns">
@@ -300,7 +307,7 @@
       <button type="button" class="btn" id="none">Tout éteindre</button>
     </div>
   </div>
-
+ 
   <div class="opts">
     <div class="opt">
       <span id="lbl-theme">Thème</span>
@@ -325,7 +332,7 @@
       </div>
     </div>
   </div>
-
+ 
   <div class="map" id="map">
     <svg class="map-h" viewBox="0 -35 960 365" role="group" aria-label="Carte du RER B, de Mitry–Claye et de l’aéroport Charles de Gaulle jusqu’à Gare du Nord">
       <path class="track" d="M236 98 H436 C466 98 478 112 486 136 L502 188"></path>
@@ -342,7 +349,7 @@
       <g id="stops-v"></g>
     </svg>
   </div>
-
+ 
   <section class="ann" aria-labelledby="ann-title">
     <div class="ann-head">
       <h2 class="ann-title" id="ann-title">Annonces sonores</h2>
@@ -359,7 +366,7 @@
         </button>
       </div>
     </div>
-
+ 
     <div class="opts">
       <div class="opt">
         <span id="lbl-voice">Voix</span>
@@ -409,7 +416,7 @@
         </div>
       </div>
     </div>
-
+ 
     <div class="phrase">
       <div class="phrase-title">Phrase 1 · Départ et destination</div>
       <div class="sentence">
@@ -425,7 +432,7 @@
         </button>
       </div>
     </div>
-
+ 
     <div class="phrase">
       <div class="phrase-title">Phrase 2 · Gares non desservies</div>
       <div class="sentence">
@@ -443,7 +450,7 @@
         <button type="button" class="btn" id="both-play">Lire les deux phrases à la suite</button>
       </div>
     </div>
-
+ 
     <div class="phrase">
       <div class="phrase-title">Phrase 3 · Texte libre</div>
       <textarea class="freetext" id="p3-text" aria-label="Texte libre à faire lire" maxlength="500" spellcheck="false"></textarea>
@@ -453,16 +460,16 @@
         </button>
         <button type="button" class="btn" id="p3-reset">Réinitialiser le texte</button>
       </div>
-      <p class="note">Lu avec la voix de ton appareil, quel que soit le mode choisi plus haut (Femme, Homme ou Appareil). Ce texte revient à la phrase ci-dessus par défaut à chaque fermeture de l’appli.</p>
+      <p class="note">Lu avec une voix d’homme ou de femme de ton appareil selon le mode choisi plus haut, avec l’ambiance et l’écho de gare autour si tu les as activés. Les navigateurs ne permettent pas d’appliquer la réverbération directement sur cette voix : c’est l’ambiance de la gare, autour de la voix, qui porte l’écho. Ce texte revient à la phrase ci-dessus par défaut à chaque fermeture de l’appli.</p>
     </div>
-
+ 
     <p class="note" id="voice-note"></p>
     <p class="note" id="ann-status" role="status"></p>
   </section>
-
+ 
   <div class="lists" id="lists"></div>
 </div>
-
+ 
 <script>
   /* l : lignes du nom ; x,y : carte horizontale ; v : carte verticale (côté du nom : l ou r) ; vl : coupure de nom propre à la carte verticale */
   var GROUPS = [
@@ -489,11 +496,11 @@
       { l: ['Gare du Nord'], x: 793, y: 195, v: { x: 180, y: 710, s: 'r' } }
     ]}
   ];
-
+ 
   var KEY = 'rerb-lumieres';
   var all = [];
   var listsHTML = '';
-
+ 
   GROUPS.forEach(function (g) {
     var chips = '';
     g.stops.forEach(function (s) {
@@ -506,7 +513,7 @@
     });
     listsHTML += '<section><h2>' + g.title + '</h2><div class="chips">' + chips + '</div></section>';
   });
-
+ 
   function build(kind) {
     var halos = '', stops = '';
     all.forEach(function (s) {
@@ -539,7 +546,7 @@
   build('h');
   build('v');
   document.getElementById('lists').innerHTML = listsHTML;
-
+ 
   /* lit : numéro de gare -> 'orange' ou 'grey' */
   var lit = new Map([[9, 'orange'], [11, 'grey'], [15, 'orange']]);
   try {
@@ -553,18 +560,18 @@
       });
     }
   } catch (e) {}
-
+ 
   function save() {
     try { localStorage.setItem(KEY, JSON.stringify(Array.from(lit))); } catch (e) {}
   }
-
+ 
   function render() {
     var counts = { orange: 0, grey: 0 };
     var brush = currentGlow();
     var allBrush = true;
     lit.forEach(function (c) { counts[c]++; });
     all.forEach(function (s) { if (lit.get(s.id) !== brush) allBrush = false; });
-
+ 
     document.querySelectorAll('.stop').forEach(function (g) {
       var c = lit.get(Number(g.dataset.id));
       g.classList.toggle('on', !!c);
@@ -582,7 +589,7 @@
       ch.setAttribute('aria-pressed', c ? 'true' : 'false');
       if (c) ch.setAttribute('data-c', c); else ch.removeAttribute('data-c');
     });
-
+ 
     var n = lit.size, total = all.length;
     var txt = n === 0 ? 'Aucune gare allumée sur ' + total :
       n === 1 ? '1 gare allumée sur ' + total :
@@ -593,13 +600,13 @@
     document.getElementById('all').disabled = allBrush;
     document.getElementById('none').disabled = n === 0;
   }
-
+ 
   function toggle(id) {
     var b = currentGlow();
     if (lit.get(id) === b) lit.delete(id); else lit.set(id, b);
     save(); render();
   }
-
+ 
   document.addEventListener('click', function (e) {
     var t = e.target.closest ? e.target.closest('[data-id]') : null;
     if (t) toggle(Number(t.dataset.id));
@@ -619,7 +626,7 @@
   document.getElementById('none').addEventListener('click', function () {
     lit = new Map(); save(); render();
   });
-
+ 
   /* ---------- Annonces sonores ---------- */
   var synth = window.speechSynthesis || null;            /* voix de l'appareil (mode « Appareil ») */
   /* iPhone : jouer le son même si le bouton silencieux est activé */
@@ -630,11 +637,11 @@
   function studioName() { return vmode === 'h' ? (prefs.htone === 'g' ? 'homme' : 'homme-leger') : 'femme'; }
   /* numéros de gare gardés en texte, comme les valeurs des listes */
   var ann = { from: '0', to: '15', via: '9', skip: ['10', '11', '12'] };
-
+ 
   function el(id) { return document.getElementById(id); }
   function engineOK() { return vmode === 'd' ? !!synth : !!AC; }
   function setStatus(t) { el('ann-status').textContent = t || ''; }
-
+ 
   function optionsHTML(placeholder) {
     var h = '<option value="">' + placeholder + '</option>';
     GROUPS.forEach(function (g) {
@@ -651,7 +658,7 @@
   el('p1-from').value = ann.from;
   el('p1-to').value = ann.to;
   el('p2-via').value = ann.via;
-
+ 
   function nm(id, speech) { return speech ? all[id].spoken : all[id].full; }
   function joinList(arr) {
     return arr.length < 2 ? arr.join('') : arr.slice(0, -1).join(', ') + ' et ' + arr[arr.length - 1];
@@ -666,7 +673,7 @@
     return 'Ce train passera par ' + nm(ann.via, sp) + ', mais ne desservira pas ' +
       (names.length === 1 ? 'la gare suivante : ' : 'les gares suivantes : ') + joinList(names) + '.';
   }
-
+ 
   /* Morceaux enregistrés : [nom du morceau, pause après en secondes]
      nXc = nom au milieu d'une phrase, nXf = nom en fin de phrase, nXe = « et » + nom */
   function p1Seq() {
@@ -683,7 +690,7 @@
     });
     return s;
   }
-
+ 
   function renderAnn() {
     var t1 = p1Text(false), t2 = p2Text(false), ok = engineOK();
     if (ann.from !== '' && ann.from === ann.to) {
@@ -703,7 +710,7 @@
     el('both-play').disabled = !(t1 && t2) || !ok;
     el('stop-audio').disabled = !ok;
   }
-
+ 
   el('p1-from').addEventListener('change', function () { ann.from = this.value; setStatus(''); renderAnn(); });
   el('p1-to').addEventListener('change', function () { ann.to = this.value; setStatus(''); renderAnn(); });
   el('p2-via').addEventListener('change', function () {
@@ -726,7 +733,7 @@
     ann.skip = ann.skip.filter(function (id) { return id !== t.dataset.rm; });
     renderAnn();
   });
-
+ 
   /* ---------- Voix de l'appareil (mode « Appareil ») ---------- */
   var MALE = /(thomas|paul|henri|r[ée]my|jacques|claude|antoine|mathieu|nicolas|guillaume|yannick|maxime|bruno)/i;
   var FEMALE = /(am[ée]lie|audrey|aur[ée]lie|hortense|julie|denise|[ée]loise|marie|c[ée]line|virginie|sylvie|google fran[cç]ais)/i;
@@ -777,7 +784,7 @@
     voiceNote();
   });
   if (synth && synth.addEventListener) synth.addEventListener('voiceschanged', pickVoice);
-
+ 
   var sayToken = 0;
   function sayDevice(texts) {
     if (!synth) return;
@@ -797,18 +804,18 @@
       synth.speak(u);
     });
   }
-
+ 
   /* ---------- Voix de studio : haut-parleur de gare, écho, hall, murmure ---------- */
   var actx = null, irBuf = null, noiseBuf = null, sprites = {}, indexJSON = null;
   var run = null, runToken = 0, finishTimer = null;
-
+ 
   function getCtx() {
     if (actx) return actx;
     if (!AC) return null;
     try { actx = new AC(); } catch (e) { return null; }
     return actx;
   }
-
+ 
   /* réponse impulsionnelle d'un grand hall : réflexions précoces puis longue queue qui s'assombrit */
   function makeIR(ctx) {
     if (irBuf && irBuf.sampleRate === ctx.sampleRate) return irBuf;
@@ -841,7 +848,7 @@
     return b;
   }
   function gainNode(ctx, v) { var g = ctx.createGain(); g.gain.value = v; return g; }
-
+ 
   /* strong = vrai écho de grand hall ; sinon écho léger */
   function buildHall(ctx, strong) {
     var nodes = [];
@@ -852,7 +859,7 @@
     limiter.connect(ctx.destination);
     var master = keep(gainNode(ctx, 0.7));
     master.connect(limiter);
-
+ 
     /* chaîne « haut-parleur de gare » : voix un peu étroite, nasale, légèrement saturée */
     var input = keep(gainNode(ctx, 1.0));
     var hp = keep(biquad(ctx, 'highpass', 330, 0.7));
@@ -863,16 +870,16 @@
     comp.threshold.value = -22; comp.ratio.value = 5; comp.attack.value = 0.004; comp.release.value = 0.18;
     var pa = keep(gainNode(ctx, 1));
     input.connect(hp); hp.connect(pk); pk.connect(lp); lp.connect(sh); sh.connect(comp); comp.connect(pa);
-
+ 
     var dry = keep(gainNode(ctx, strong ? 0.62 : 0.85));
     pa.connect(dry); dry.connect(master);
-
+ 
     /* réverbération de hall */
     var pre = keep(ctx.createDelay(0.2)); pre.delayTime.value = 0.03;
     var conv = keep(ctx.createConvolver()); conv.buffer = makeIR(ctx);
     var wet = keep(gainNode(ctx, strong ? 1.2 : 0.6));
     pa.connect(pre); pre.connect(conv); conv.connect(wet); wet.connect(master);
-
+ 
     /* écho qui rebondit sur les murs, de plus en plus sourd */
     var echo = keep(ctx.createDelay(1.5)); echo.delayTime.value = strong ? 0.31 : 0.22;
     var elp = keep(biquad(ctx, 'lowpass', 2600));
@@ -880,16 +887,16 @@
     var eout = keep(gainNode(ctx, strong ? 0.5 : 0.25));
     pa.connect(echo); echo.connect(elp); elp.connect(fb); fb.connect(echo);
     elp.connect(eout); eout.connect(master); eout.connect(conv);
-
+ 
     /* entrée du jingle : son direct, avec la réverbération du hall, sans le filtre de haut-parleur */
     var jin = keep(gainNode(ctx, 1.9));
     var jdry = keep(gainNode(ctx, 0.9));
     var jsend = keep(gainNode(ctx, strong ? 0.6 : 0.3));
     jin.connect(jdry); jdry.connect(master); jin.connect(jsend); jsend.connect(conv);
-
+ 
     return { input: input, jin: jin, master: master, conv: conv, nodes: nodes };
   }
-
+ 
   function chime(ctx, hall, t, f) {
     var g = ctx.createGain(), o1 = ctx.createOscillator(), o2 = ctx.createOscillator();
     o1.type = 'sine'; o1.frequency.value = f;
@@ -901,7 +908,7 @@
     o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(hall.input);
     o1.start(t); o2.start(t); o1.stop(t + 1.6); o2.stop(t + 1.6);
   }
-
+ 
   /* murmure de foule : trois bandes de bruit dont le volume ondule lentement, envoyées dans le hall */
   function startAmbience(ctx, hall, t0, vol) {
     if (!noiseBuf || noiseBuf.sampleRate !== ctx.sampleRate) {
@@ -936,7 +943,7 @@
       nodes: [out, send]
     };
   }
-
+ 
   function loadIndex() {
     if (indexJSON) return Promise.resolve(indexJSON);
     return fetch('audio/index.json').then(function (r) {
@@ -954,7 +961,7 @@
       return new Promise(function (res, rej) { ctx.decodeAudioData(ab, res, rej); });
     }).then(function (buf) { sprites[name] = buf; return buf; });
   }
-
+ 
   var jingleBuf = null;
   function loadJingle() {
     if (jingleBuf) return Promise.resolve(jingleBuf);
@@ -966,7 +973,7 @@
       return new Promise(function (res, rej) { ctx.decodeAudioData(ab, res, rej); });
     }).then(function (b) { jingleBuf = b; return b; }).catch(function () { return null; });
   }
-
+ 
   function stopAll(hard) {
     clearTimeout(finishTimer);
     var r = run;
@@ -986,7 +993,7 @@
       } catch (e) {}
     }, 1300);
   }
-
+ 
   function schedule(ctx, idx, buf, seqs, token, jbuf) {
     var strong = prefs.echo !== 0;
     var hall = buildHall(ctx, strong);
@@ -1028,7 +1035,7 @@
       if (run && run.token === token) stopAll(false);
     }, Math.max(0, (t + tail + 0.3 - ctx.currentTime)) * 1000);
   }
-
+ 
   function playStudio(seqs) {
     var ctx = getCtx();
     if (!ctx) { setStatus('Ce navigateur ne gère pas le son web.'); return; }
@@ -1046,7 +1053,7 @@
       setStatus('Les enregistrements n’ont pas pu être chargés. Choisis « Appareil » pour utiliser la voix de ton téléphone ou de ton ordinateur.');
     });
   }
-
+ 
   function speak(which) {
     if (vmode === 'd') {
       var texts = which.map(function (k) { return k === 1 ? p1Text(true) : p2Text(true); }).filter(Boolean);
@@ -1059,7 +1066,7 @@
   el('p1-play').addEventListener('click', function () { speak([1]); });
   el('p2-play').addEventListener('click', function () { speak([2]); });
   el('both-play').addEventListener('click', function () { speak([1, 2]); });
-
+ 
   /* ---------- Phrase 3 : texte libre (toujours lu avec la voix de l'appareil, même en mode Femme/Homme) ---------- */
   var P3_DEFAULT = 'Mesdames, messieurs, bienvenue à bord de ce train.';
   el('p3-text').value = P3_DEFAULT; /* remis à cette phrase à chaque ouverture, jamais mémorisé */
@@ -1069,13 +1076,55 @@
   }
   function syncP3() { el('p3-play').disabled = !p3Text() || !synth; }
   el('p3-text').addEventListener('input', syncP3);
-  el('p3-play').addEventListener('click', function () {
+  function p3Voice() {
+    if (vmode === 'f' || vmode === 'h') {
+      var re = vmode === 'h' ? MALE : FEMALE;
+      var match = voices.filter(function (v) { return re.test(v.name); })[0];
+      if (!match) setStatus('Aucune voix ' + (vmode === 'h' ? 'd’homme' : 'de femme') + ' trouvée sur cet appareil : voix par défaut utilisée.');
+      return match || defaultVoice();
+    }
+    return voice;
+  }
+  function playP3() {
     var t = p3Text();
     if (!t) return;
     if (!synth) { setStatus('Ce navigateur ne sait pas lire du texte à voix haute.'); return; }
+    setStatus('');
     stopAll(true);
-    sayDevice([t]);
-  });
+    if (synth) synth.cancel();
+    var token = ++runToken;
+    var ctx = getCtx(), delay = 0;
+    if (ctx) {
+      try { if (ctx.state === 'suspended' && ctx.resume) ctx.resume(); } catch (e) {}
+      var strong = prefs.echo !== 0;
+      var hall = buildHall(ctx, strong);
+      var t0 = ctx.currentTime + 0.05, amb = null;
+      if (prefs.amb !== 0) { amb = startAmbience(ctx, hall, t0, strong ? 0.2 : 0.14); delay = 450; }
+      if (prefs.jingle !== 0) { chime(ctx, hall, t0 + 0.05, 659.25); chime(ctx, hall, t0 + 0.42, 523.25); delay = Math.max(delay, 950); }
+      run = { hall: hall, srcs: [], amb: amb, token: token };
+    }
+    setTimeout(function () {
+      if (token !== runToken) return;
+      function finish() { if (token === runToken) { runToken++; stopAll(false); } }
+      try {
+        var u = new SpeechSynthesisUtterance(t);
+        u.lang = 'fr-FR'; u.rate = rate; u.pitch = pitch;
+        var v = p3Voice(); if (v) u.voice = v;
+        u.onend = finish;
+        u.onerror = function (ev) {
+          if (ev.error !== 'canceled' && ev.error !== 'interrupted') {
+            setStatus('La lecture audio a échoué (' + ev.error + '). Vérifie que le son de ton appareil est activé.');
+          }
+          finish();
+        };
+        synth.speak(u);
+      } catch (e) {
+        setStatus('La lecture audio a échoué. Vérifie que le son de ton appareil est activé.');
+        finish();
+      }
+    }, delay);
+  }
+  el('p3-play').addEventListener('click', playP3);
   el('p3-reset').addEventListener('click', function () {
     el('p3-text').value = P3_DEFAULT;
     syncP3();
@@ -1087,7 +1136,7 @@
     stopAll(false);
     if (synth) synth.cancel();
   });
-
+ 
   /* ---------- Réglages de la section ---------- */
   function markSeg(attr, val) {
     document.querySelectorAll('[' + attr + ']').forEach(function (b) {
@@ -1140,19 +1189,19 @@
   document.querySelectorAll('[data-rate]').forEach(function (b) {
     b.addEventListener('click', function () { rate = Number(b.dataset.rate); markSeg('data-rate', rate); });
   });
-
+ 
   var PREF = 'rerb-prefs';
   var root = document.documentElement;
   var prefs = {};
   try { prefs = JSON.parse(localStorage.getItem(PREF) || '{}') || {}; } catch (e) { prefs = {}; }
   var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
-
+ 
   /* Mode choisi : clair, sombre, ou système de l'appareil (par défaut) */
   function themeMode() {
     return (prefs.theme === 'light' || prefs.theme === 'dark') ? prefs.theme : 'system';
   }
   function currentGlow() { return prefs.glow === 'grey' ? 'grey' : 'orange'; }
-
+ 
   function markPressed() {
     var th = themeMode(), gl = currentGlow();
     document.querySelectorAll('[data-theme-set]').forEach(function (b) {
@@ -1171,7 +1220,7 @@
   function savePrefs() {
     try { localStorage.setItem(PREF, JSON.stringify(prefs)); } catch (e) {}
   }
-
+ 
   document.querySelectorAll('[data-theme-set]').forEach(function (b) {
     b.addEventListener('click', function () { prefs.theme = b.dataset.themeSet; savePrefs(); applyPrefs(); });
   });
@@ -1180,17 +1229,61 @@
   });
   if (mq && mq.addEventListener) mq.addEventListener('change', markPressed);
   if (window.MutationObserver) new MutationObserver(markPressed).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
-
+ 
   applyPrefs();
   render();
   restoreAnnPrefs();
   pickVoice();
   renderAnn();
-
+ 
   /* Mode hors ligne (site installé sur l'écran d'accueil). Inutile dans l'appli Android/iOS native. */
   if ('serviceWorker' in navigator && !window.Capacitor && /^https?:$/.test(location.protocol)) {
     window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
   }
+ 
+  /* ---------- Navigation à la télécommande (Android TV) ----------
+     Le WebView d'Android TV transforme les flèches de la télécommande en
+     touches ArrowUp/Down/Left/Right, mais ne déplace pas le focus tout seul :
+     c'est à la page de le faire. Sans ce bloc, la télécommande ne sert à rien. */
+  (function () {
+    var SEL = 'a[href], button:not([disabled]), select, textarea, input:not([type=hidden]):not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])';
+    function candidates() {
+      return Array.prototype.filter.call(document.querySelectorAll(SEL), function (e) {
+        return e.offsetParent !== null || e === document.activeElement;
+      });
+    }
+    function move(dir) {
+      var list = candidates();
+      if (!list.length) return;
+      var from = document.activeElement;
+      if (!from || from === document.body || from === document.documentElement || list.indexOf(from) < 0) {
+        list[0].focus();
+        return;
+      }
+      var r0 = from.getBoundingClientRect(), cx0 = r0.left + r0.width / 2, cy0 = r0.top + r0.height / 2;
+      var best = null, bestScore = Infinity;
+      list.forEach(function (el) {
+        if (el === from) return;
+        var r = el.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        var dx = cx - cx0, dy = cy - cy0, primary, ortho;
+        if (dir === 'ArrowRight') { if (dx <= 2) return; primary = dx; ortho = Math.abs(dy); }
+        else if (dir === 'ArrowLeft') { if (dx >= -2) return; primary = -dx; ortho = Math.abs(dy); }
+        else if (dir === 'ArrowDown') { if (dy <= 2) return; primary = dy; ortho = Math.abs(dx); }
+        else { if (dy >= -2) return; primary = -dy; ortho = Math.abs(dx); }
+        var score = primary + ortho * 2.2;
+        if (score < bestScore) { bestScore = score; best = el; }
+      });
+      if (best) { best.focus(); if (best.scrollIntoView) best.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }
+    }
+    document.addEventListener('keydown', function (e) {
+      var k = e.key;
+      if (k !== 'ArrowUp' && k !== 'ArrowDown' && k !== 'ArrowLeft' && k !== 'ArrowRight') return;
+      var tag = document.activeElement && document.activeElement.tagName;
+      if (tag === 'SELECT' || tag === 'TEXTAREA') return; /* laisser le composant gérer ses propres flèches */
+      move(k);
+      e.preventDefault();
+    });
+  })();
 </script>
-
+ 
 </body></html>
