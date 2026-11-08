@@ -205,6 +205,12 @@
     border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--fg);
     font: inherit; font-size: 15px;
   }
+  .freetext {
+    width: 100%; min-height: 84px; resize: vertical; padding: 10px 12px;
+    border: 1px solid var(--border); border-radius: 8px; background: var(--chip); color: var(--fg);
+    font: inherit; font-size: 16px; line-height: 1.4;
+  }
+  .freetext:focus-visible { outline: 3px solid var(--fg); outline-offset: 2px; }
   .opt .sel { max-width: 250px; }
   .sel:focus-visible { outline: 3px solid var(--fg); outline-offset: 2px; }
 
@@ -250,6 +256,12 @@
   /* Grands écrans */
   @media (min-width: 1100px) {
     .wrap { max-width: 1200px; }
+  }
+  /* Télévision (lecture à distance) */
+  @media (min-width: 1400px) {
+    body { font-size: 19px; }
+    .wrap { max-width: 1500px; }
+    .btn, .seg button { min-height: 52px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -298,6 +310,10 @@
         </button>
         <button type="button" data-theme-set="dark" aria-pressed="false" aria-label="Thème sombre" title="Thème sombre">
           <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+        <button type="button" data-theme-set="system" aria-pressed="false" aria-label="Thème du système de l’appareil" title="Suivre le thème du système de l’appareil">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M8 20h8M12 16v4"></path></svg>
+          Système de l’appareil
         </button>
       </div>
     </div>
@@ -426,6 +442,18 @@
         </button>
         <button type="button" class="btn" id="both-play">Lire les deux phrases à la suite</button>
       </div>
+    </div>
+
+    <div class="phrase">
+      <div class="phrase-title">Phrase 3 · Texte libre</div>
+      <textarea class="freetext" id="p3-text" aria-label="Texte libre à faire lire" maxlength="500" spellcheck="false"></textarea>
+      <div class="btns">
+        <button type="button" class="btn primary with-ico" id="p3-play">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="fill: currentColor"><path d="M7 4l13 8-13 8z"></path></svg>Écouter
+        </button>
+        <button type="button" class="btn" id="p3-reset">Réinitialiser le texte</button>
+      </div>
+      <p class="note">Lu avec la voix de ton appareil, quel que soit le mode choisi plus haut (Femme, Homme ou Appareil). Ce texte revient à la phrase ci-dessus par défaut à chaque fermeture de l’appli.</p>
     </div>
 
     <p class="note" id="voice-note"></p>
@@ -1031,6 +1059,29 @@
   el('p1-play').addEventListener('click', function () { speak([1]); });
   el('p2-play').addEventListener('click', function () { speak([2]); });
   el('both-play').addEventListener('click', function () { speak([1, 2]); });
+
+  /* ---------- Phrase 3 : texte libre (toujours lu avec la voix de l'appareil, même en mode Femme/Homme) ---------- */
+  var P3_DEFAULT = 'Mesdames, messieurs, bienvenue à bord de ce train.';
+  el('p3-text').value = P3_DEFAULT; /* remis à cette phrase à chaque ouverture, jamais mémorisé */
+  function p3Text() {
+    var t = el('p3-text').value.replace(/\s+/g, ' ').trim();
+    return t || null;
+  }
+  function syncP3() { el('p3-play').disabled = !p3Text() || !synth; }
+  el('p3-text').addEventListener('input', syncP3);
+  el('p3-play').addEventListener('click', function () {
+    var t = p3Text();
+    if (!t) return;
+    if (!synth) { setStatus('Ce navigateur ne sait pas lire du texte à voix haute.'); return; }
+    stopAll(true);
+    sayDevice([t]);
+  });
+  el('p3-reset').addEventListener('click', function () {
+    el('p3-text').value = P3_DEFAULT;
+    syncP3();
+    el('p3-text').focus();
+  });
+  syncP3();
   el('stop-audio').addEventListener('click', function () {
     runToken++;
     stopAll(false);
@@ -1096,15 +1147,14 @@
   try { prefs = JSON.parse(localStorage.getItem(PREF) || '{}') || {}; } catch (e) { prefs = {}; }
   var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
 
-  function currentTheme() {
-    var a = root.getAttribute('data-theme');
-    if (a === 'light' || a === 'dark') return a;
-    return mq && mq.matches ? 'dark' : 'light';
+  /* Mode choisi : clair, sombre, ou système de l'appareil (par défaut) */
+  function themeMode() {
+    return (prefs.theme === 'light' || prefs.theme === 'dark') ? prefs.theme : 'system';
   }
   function currentGlow() { return prefs.glow === 'grey' ? 'grey' : 'orange'; }
 
   function markPressed() {
-    var th = currentTheme(), gl = currentGlow();
+    var th = themeMode(), gl = currentGlow();
     document.querySelectorAll('[data-theme-set]').forEach(function (b) {
       b.setAttribute('aria-pressed', b.dataset.themeSet === th ? 'true' : 'false');
     });
@@ -1114,6 +1164,7 @@
   }
   function applyPrefs() {
     if (prefs.theme === 'light' || prefs.theme === 'dark') root.setAttribute('data-theme', prefs.theme);
+    else root.removeAttribute('data-theme');
     if (currentGlow() === 'grey') root.setAttribute('data-glow', 'grey'); else root.removeAttribute('data-glow');
     markPressed();
   }

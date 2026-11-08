@@ -1,0 +1,22 @@
+{
+  "name": "simulation-trajet-rerb",
+  "version": "1.0.0",
+  "description": "Simulation trajet RERB",
+  "author": "RERB",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.rerb.lumieres",
+    "productName": "Simulation trajet RERB",
+    "files": ["main.js", "www/**/*"],
+    "directories": { "output": "dist" },
+    "win": { "target": ["portable"], "icon": "icon.png" },
+    "portable": { "artifactName": "Simulation-trajet-RERB.exe" }
+  }
+}
